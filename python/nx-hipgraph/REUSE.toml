@@ -1,0 +1,25 @@
+version = 1
+
+[[annotations]]
+  path = ["**/*.md", "**/VERSION"]
+  precedence = "aggregate"
+  SPDX-FileCopyrightText = [
+    "Copyright (c) 2022-2024, NVIDIA CORPORATION.",
+  ]
+  SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+  path = ["**/*.md", "**/VERSION"]
+  precedence = "aggregate"
+  SPDX-FileCopyrightText = [
+    "Copyright (c) 2025, Advanced Micro Devices, Inc."
+  ]
+  SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+  path = ["hipgraph/datasets/**/*.yaml"]
+  precedence = "aggregate"
+  SPDX-FileCopyrightText = [
+    "Copyright (c) 2022-2024, NVIDIA CORPORATION.",
+  ]
+  SPDX-License-Identifier = "Apache-2.0"

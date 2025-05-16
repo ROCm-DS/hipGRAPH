@@ -1,0 +1,216 @@
+// SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: Copyright (c) 2022-2024, NVIDIA CORPORATION.
+// SPDX-License-Identifier: Apache-2.0
+/*
+ * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights reserved.
+ */
+
+/*
+ * Copyright (C) 2021-2024, NVIDIA CORPORATION.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "test_utils.h" /* RUN_TEST */
+
+#include "hipgraph_c/algorithms.h"
+#include "hipgraph_c/graph.h"
+
+#include <cmath>
+
+using vertex_t = int32_t;
+using edge_t   = int32_t;
+using weight_t = float;
+
+namespace
+{
+    using namespace hipGRAPH::testing;
+    void generic_bfs_test_with_extract_paths(vertex_t*       h_src,
+                                             vertex_t*       h_dst,
+                                             weight_t*       h_wgt,
+                                             vertex_t*       h_seeds,
+                                             vertex_t*       h_destinations,
+                                             vertex_t        expected_max_path_length,
+                                             vertex_t const* expected_paths,
+                                             size_t          num_vertices,
+                                             size_t          num_edges,
+                                             size_t          num_seeds,
+                                             size_t          num_destinations,
+                                             size_t          depth_limit,
+                                             hipgraph_bool_t store_transposed)
+    {
+
+        hipgraph_error_code_t ret_code = HIPGRAPH_SUCCESS;
+        hipgraph_error_t*     ret_error;
+
+        hipgraph_resource_handle_t*               p_handle               = nullptr;
+        hipgraph_graph_t*                         p_graph                = nullptr;
+        hipgraph_paths_result_t*                  p_paths_result         = nullptr;
+        hipgraph_extract_paths_result_t*          p_extract_paths_result = nullptr;
+        hipgraph_type_erased_device_array_t*      p_sources              = nullptr;
+        hipgraph_type_erased_device_array_t*      p_destinations         = nullptr;
+        hipgraph_type_erased_device_array_view_t* p_sources_view         = nullptr;
+        hipgraph_type_erased_device_array_view_t* p_destinations_view    = nullptr;
+
+        p_handle = hipgraph_create_resource_handle(nullptr);
+        ASSERT_NE(p_handle, nullptr) << "resource handle creation failed.";
+
+        create_test_graph(p_handle,
+                          h_src,
+                          h_dst,
+                          h_wgt,
+                          num_edges,
+                          store_transposed,
+                          HIPGRAPH_FALSE,
+                          HIPGRAPH_FALSE,
+                          &p_graph,
+                          &ret_error);
+
+        ret_code = hipgraph_type_erased_device_array_create(
+            p_handle, num_seeds, HIPGRAPH_INT32, &p_sources, &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "p_sources create failed: " << hipgraph_error_message(ret_error);
+
+        p_sources_view = hipgraph_type_erased_device_array_view(p_sources);
+
+        ret_code = hipgraph_type_erased_device_array_view_copy_from_host(
+            p_handle, p_sources_view, (hipgraph_byte_t*)h_seeds, &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "src copy_from_host failed: " << hipgraph_error_message(ret_error);
+
+        ret_code = hipgraph_type_erased_device_array_create(
+            p_handle, num_destinations, HIPGRAPH_INT32, &p_destinations, &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "p_destinations create failed: " << hipgraph_error_message(ret_error);
+
+        p_destinations_view = hipgraph_type_erased_device_array_view(p_destinations);
+
+        ret_code = hipgraph_type_erased_device_array_view_copy_from_host(
+            p_handle, p_destinations_view, (hipgraph_byte_t*)h_destinations, &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "src copy_from_host failed: " << hipgraph_error_message(ret_error);
+
+        ret_code = hipgraph_bfs(p_handle,
+                                p_graph,
+                                p_sources_view,
+                                HIPGRAPH_FALSE,
+                                depth_limit,
+                                HIPGRAPH_TRUE,
+                                HIPGRAPH_FALSE,
+                                &p_paths_result,
+                                &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "hipgraph_bfs failed: " << hipgraph_error_message(ret_error);
+
+        ret_code = hipgraph_extract_paths(p_handle,
+                                          p_graph,
+                                          p_sources_view,
+                                          p_paths_result,
+                                          p_destinations_view,
+                                          &p_extract_paths_result,
+                                          &ret_error);
+
+        size_t max_path_length
+            = hipgraph_extract_paths_result_get_max_path_length(p_extract_paths_result);
+        EXPECT_EQ(max_path_length, expected_max_path_length) << "path lengths don't match";
+
+        hipgraph_type_erased_device_array_view_t* paths_view
+            = hipgraph_extract_paths_result_get_paths(p_extract_paths_result);
+
+        size_t paths_size = hipgraph_type_erased_device_array_view_size(paths_view);
+
+        vertex_t h_paths[paths_size];
+
+        ret_code = hipgraph_type_erased_device_array_view_copy_to_host(
+            p_handle, (hipgraph_byte_t*)h_paths, paths_view, &ret_error);
+        ASSERT_EQ(ret_code, HIPGRAPH_SUCCESS)
+            << "copy_to_host failed: " << hipgraph_error_message(ret_error);
+
+        for(size_t i = 0; i < paths_size; ++i)
+        {
+            EXPECT_EQ(expected_paths[i], h_paths[i]) << "paths don't match at position " << i;
+        }
+
+        hipgraph_type_erased_device_array_view_free(paths_view);
+        hipgraph_type_erased_device_array_view_free(p_sources_view);
+        hipgraph_type_erased_device_array_view_free(p_destinations_view);
+        hipgraph_type_erased_device_array_free(p_sources);
+        hipgraph_type_erased_device_array_free(p_destinations);
+        hipgraph_extract_paths_result_free(p_extract_paths_result);
+        hipgraph_paths_result_free(p_paths_result);
+        hipgraph_sg_graph_free(p_graph);
+        hipgraph_free_resource_handle(p_handle);
+        hipgraph_error_free(ret_error);
+    }
+
+    TEST(AlgorithmTest, BfsWithExtractPaths)
+    {
+        size_t num_edges    = 8;
+        size_t num_vertices = 6;
+
+        vertex_t src[]                    = {0, 1, 1, 2, 2, 2, 3, 4};
+        vertex_t dst[]                    = {1, 3, 4, 0, 1, 3, 5, 5};
+        weight_t wgt[]                    = {0.1f, 2.1f, 1.1f, 5.1f, 3.1f, 4.1f, 7.2f, 3.2f};
+        vertex_t seeds[]                  = {0};
+        vertex_t destinations[]           = {5};
+        vertex_t expected_max_path_length = 4;
+        vertex_t expected_paths[]         = {0, 1, 3, 5};
+
+        // Bfs wants store_transposed = HIPGRAPH_FALSE
+        generic_bfs_test_with_extract_paths(src,
+                                            dst,
+                                            wgt,
+                                            seeds,
+                                            destinations,
+                                            expected_max_path_length,
+                                            expected_paths,
+                                            num_vertices,
+                                            num_edges,
+                                            1,
+                                            1,
+                                            10,
+                                            HIPGRAPH_FALSE);
+    }
+
+    TEST(AlgorithmTest, BfsWithExtractPathsWithTranspose)
+    {
+        size_t num_edges    = 8;
+        size_t num_vertices = 6;
+
+        vertex_t src[]                    = {0, 1, 1, 2, 2, 2, 3, 4};
+        vertex_t dst[]                    = {1, 3, 4, 0, 1, 3, 5, 5};
+        weight_t wgt[]                    = {0.1f, 2.1f, 1.1f, 5.1f, 3.1f, 4.1f, 7.2f, 3.2f};
+        vertex_t seeds[]                  = {0};
+        vertex_t destinations[]           = {5};
+        vertex_t expected_max_path_length = 4;
+        vertex_t expected_paths[]         = {0, 1, 3, 5};
+
+        // Bfs wants store_transposed = HIPGRAPH_FALSE
+        //    This call will force hipgraph_bfs to transpose the graph
+        generic_bfs_test_with_extract_paths(src,
+                                            dst,
+                                            wgt,
+                                            seeds,
+                                            destinations,
+                                            expected_max_path_length,
+                                            expected_paths,
+                                            num_vertices,
+                                            num_edges,
+                                            1,
+                                            1,
+                                            10,
+                                            HIPGRAPH_TRUE);
+    }
+
+} // namespace
