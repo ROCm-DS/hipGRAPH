@@ -1,0 +1,99 @@
+# SPDX-FileCopyrightText: 2025 Advanced Micro Devices, Inc.
+# SPDX-FileCopyrightText: Copyright (c) 2022, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: MIT
+
+[build-system]
+
+requires = [
+  "cython>=3.0.0",
+  "scikit-build-core[pyproject]>=0.10.0",
+  'numba-hip[rocm-6-4-0]@git+https://github.com/rocm/numba-hip.git',
+  "amd-cupy",
+  "amd-hipmm",
+]
+build-backend = "scikit_build_core.build"
+
+[tool.pytest.ini_options]
+testpaths = ["hipgraph/tests"]
+
+[project]
+name = "amd-hipgraph"
+version = "1.0.0b1"
+description = "hipGRAPH - ROCm GPU Graph Algorithm Package"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "NVIDIA Corporation" },
+    { name = "Advanced Micro Devices, Inc. (AMD)" },
+]
+license = { text = "Apache-2.0 AND MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "hip-python>=5.6",
+    "amd-hipdf",
+    "hip-python-as-cuda>=5.6",
+    "amd-cupy",
+    'numba-hip[rocm-6-4-0]@git+https://github.com/rocm/numba-hip.git',
+    # "amd-dask_hipdf",
+    "fsspec[http]>=0.6.0",
+    "numba>=0.57",
+    "numpy>=1.23,<3.0a0",
+    "amd-pylibhipgraph",
+    "amd-hipmm",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+test = [
+    "certifi",
+    "networkx>=2.5.1",
+    "numpy>=1.23,<3.0a0",
+    "pandas",
+    # "pylibwholegraph==25.2.*,>=0.0.0a0",
+    "pytest",
+    # "pytest-benchmark",
+    # "pytest-cov",
+    # "pytest-xdist",
+    "python-louvain",
+    "scikit-learn>=0.23.1",
+    "scipy",
+]
+
+[project.urls]
+Homepage = "https://github.com/ROCm-DS/hipGRAPH/python/"
+Documentation = "https://rocm.docs.amd.com/projects/hipGRAPH/"
+
+[tool.scikit-build]
+build-dir = "build/{wheel_tag}"
+cmake.build-type = "Release"
+cmake.version = "CMakeLists.txt"
+minimum-version = "build-system.requires"
+ninja.make-fallback = true
+sdist.reproducible = true
+wheel.packages = ["hipgraph"]
+sdist.exclude = ["hipgraph/gnn", "hipgraph/dask", "hipgraph/experimental/",
+  "hipgraph/structure/graph_implementation/simpleDistributedGraph.py"]
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "hipgraph/VERSION"
+regex = "(?P<value>.*)"
+
+[tool.rapids-build-backend]
+build-backend = "scikit_build_core.build"
+requires = [
+    "cmake>=3.26.4,!=3.30.0",
+    "ninja",
+    "pylibhipgraph>==23.*",
+    # AMD: Use an unsigned char * as a generic handle type rather than adding a dependency.
+    # "pylibraft==25.2.*,>=0.0.0a0",
+    "hipmm>=23.*",
+]

@@ -1,0 +1,54 @@
+# Copyright (c) 2022, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: 2025 Advanced Micro Devices, Inc.
+# SPDX-FileCopyrightText: Modifications Copyright (c) 2025, Advanced Micro Devices, Inc.
+#
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = [
+    "cython>=3.0.0",
+    "scikit-build-core[pyproject]>=0.7.0",
+    "setuptools>=40.8.0",
+]
+build-backend = "scikit_build_core.build"
+
+[tool.pytest.ini_options]
+testpaths = ["pylibhipgraph/tests"]
+
+[project]
+name = "amd-pylibhipgraph"
+version = "1.0.0b1"
+description = "pylibhipgraph - Python bindings for the hipGRAPH HIP library"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "NVIDIA Corporation" },
+    { name = "Advanced Micro Devices, Inc. (AMD)" },
+]
+license = { text = "Apache-2.0 AND MIT" }
+requires-python = ">=3.10"
+classifiers = [
+    "Environment :: GPU",
+    "Environment :: GPU :: AMD HIP",
+    "Environment :: GPU :: AMD ROCm",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+]
+
+[project.optional-dependencies]
+test = [
+     "numpy>=1.23,<2.0a0",
+     "pandas",
+     "pytest",
+     "scipy",
+]
+
+[project.urls]
+Homepage = "https://github.com/ROCm-DS/hipGRAPH/python/"
+Documentation = "https://rocm.docs.amd.com/projects/hipGRAPH/"
+
+[tool.scikit-build]
+build-dir = "build/{wheel_tag}"
+cmake.build-type = "Release"
+sdist.reproducible = true
+wheel.packages = ["pylibhipgraph"]
