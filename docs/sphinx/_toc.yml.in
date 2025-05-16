@@ -1,0 +1,19 @@
+defaults:
+  numbered: False
+root: index
+subtrees:
+
+- caption: Install
+  entries:
+  - file: install/Linux_Install_Guide.rst
+
+- caption: Reference
+  entries:
+  - file: reference/reference-c.rst
+    title: C++ API reference
+  - file: reference/reference-py.rst
+    title: Python API reference
+
+- caption: About
+  entries:
+  - file: license.rst

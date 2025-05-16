@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Advanced Micro Devices, Inc.
+#
+# SPDX-License-Identifier: MIT
+
+*.cpp
+__pycache__
+dist/
+wheelhouse/
+*.egg-info/
+.venv/
