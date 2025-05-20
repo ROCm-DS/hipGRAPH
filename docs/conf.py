@@ -41,7 +41,7 @@ extensions = [
 ]
 
 # Breathe configuration for Doxygen
-breathe_projects = {"hipGRAPH": "docs/doxygen/xml"}  # Ensure Doxygen XML is in ./xml
+breathe_projects = {"hipGRAPH": "./doxygen/xml"}  # Ensure Doxygen XML is in ./xml
 breathe_default_project = "hipGRAPH"
 
 autodoc_default_options = {
