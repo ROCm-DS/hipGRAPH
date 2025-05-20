@@ -35,17 +35,10 @@ html_theme_options = {"flavor": "rocm-ds"}
 
 extensions = [
     "rocm_docs",
+    "rocm_docs.doxygen",
     "sphinx.ext.autodoc",  # Automatically create API documentation from Python docstrings
     "breathe", # For Doxygen C++ docs
 ]
-
-external_toc_path = "./sphinx/_toc.yml"
-doxygen_root = "doxygen"
-doxysphinx_enabled = True
-doxygen_project = {
-    "name": "doxygen",
-    "path": "doxygen/xml",
-}
 
 # Breathe configuration for Doxygen
 breathe_projects = {"hipGRAPH": "docs/doxygen/xml"}  # Ensure Doxygen XML is in ./xml
@@ -64,6 +57,14 @@ autodoc_default_options = {
 source_suffix = {
     ".rst": "restructuredtext",
     ".pyx": "pyx_parser.PyxParser",
+}
+
+external_toc_path = "./sphinx/_toc.yml"
+doxygen_root = "doxygen"
+doxysphinx_enabled = True
+doxygen_project = {
+    "name": "doxygen",
+    "path": "doxygen/xml",
 }
 
 external_projects_current_project = "hipGRAPH"
