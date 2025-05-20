@@ -30,6 +30,12 @@ setting_all_article_info = True
 all_article_info_os = ["linux"]
 all_article_info_author = ""
 
+extensions = [
+    "rocm_docs",
+    "sphinx.ext.autodoc",  # Automatically create API documentation from Python docstrings
+    "breathe", # For Doxygen C++ docs
+]
+
 html_theme = "rocm_docs_theme"
 html_theme_options = {"flavor": "rocm-ds"}
 
@@ -45,26 +51,5 @@ doxygen_project = {
 # Breathe configuration for Doxygen
 breathe_projects = {"hipGRAPH": "./doxygen/xml"}  # Ensure Doxygen XML is in ./xml
 breathe_default_project = "hipGRAPH"
-
-autodoc_default_options = {
-    "members": True,
-    "undoc-members": True,
-    "special-members": "__init__, __getitem__",
-    "inherited-members": True,
-    "show-inheritance": True,
-    "imported-members": False,
-    "member-order": "bysource",  # bysource: seems unfortunately not to work for Cython modules
-}
-
-source_suffix = {
-    ".rst": "restructuredtext",
-    ".pyx": "pyx_parser.PyxParser",
-}
-
-extensions = [
-    "rocm_docs",
-    "sphinx.ext.autodoc",  # Automatically create API documentation from Python docstrings
-    "breathe", # For Doxygen C++ docs
-]
 
 external_projects_current_project = "hipGRAPH"
