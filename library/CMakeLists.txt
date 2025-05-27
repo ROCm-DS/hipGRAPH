@@ -154,6 +154,11 @@ if(NOT BUILD_SHARED_LIBS)
     set_target_properties(hipgraph PROPERTIES PREFIX "lib")
 endif()
 
+if(BUILD_CODE_COVERAGE)
+  target_compile_options( hipgraph PRIVATE -g -O0 -fprofile-instr-generate -fcoverage-mapping )
+  target_link_options( hipgraph PUBLIC -fprofile-instr-generate )
+endif()
+
 # Include sources
 add_subdirectory(src)
 
