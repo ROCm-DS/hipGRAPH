@@ -107,6 +107,7 @@ option(BUILD_CODE_COVERAGE "Build with code coverage enabled" OFF)
 option(BUILD_ADDRESS_SANITIZER "Build with address sanitizer enabled" OFF)
 option(BUILD_DOCS "Build documentation" OFF)
 option(USE_CUDA "Build hipGRAPH using CUDA backend" OFF)
+option(BUILD_CODE_COVERAGE "Build with code coverage flags (clang only)" OFF)
 # If CUGRAPH_BUILD_DIR is not set, look at CUGRAPH_SOURCE_DIR/cpp/build.
 cmake_dependent_option(CUGRAPH_SOURCE_DIR "Point at a cugraph source directory" "" USE_CUDA "")
 cmake_dependent_option(CUGRAPH_BUILD_DIR "Point at a cugraph build directory (often cpp/build)" "" USE_CUDA "")
