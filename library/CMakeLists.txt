@@ -35,24 +35,28 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/hipgraph/hipgraph-version.h.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/hipgraph/hipgraph.h"
                "${PROJECT_BINARY_DIR}/include/hipgraph/hipgraph.h" COPYONLY)
 
-# Public hipGRAPH headers TODO: Stop maintaining these manually.
+# Public hipGRAPH headers
 set(hipgraph_headers_public include/hipgraph/hipgraph.h ${PROJECT_BINARY_DIR}/include/hipgraph/hipgraph-version.h)
 set(hipgraph_c_headers_public
-    include/hipgraph/hipgraph_c/algorithms.h
-    include/hipgraph/hipgraph_c/array.h
-    include/hipgraph/hipgraph_c/centrality_algorithms.h
-    include/hipgraph/hipgraph_c/community_algorithms.h
-    include/hipgraph/hipgraph_c/core_algorithms.h
-    include/hipgraph/hipgraph_c/error.h
-    include/hipgraph/hipgraph_c/graph_functions.h
-    include/hipgraph/hipgraph_c/graph_generators.h
-    include/hipgraph/hipgraph_c/graph.h
-    include/hipgraph/hipgraph_c/labeling_algorithms.h
-    include/hipgraph/hipgraph_c/random.h
-    include/hipgraph/hipgraph_c/resource_handle.h
-    include/hipgraph/hipgraph_c/sampling_algorithms.h
-    include/hipgraph/hipgraph_c/similarity_algorithms.h
-    include/hipgraph/hipgraph_c/traversal_algorithms.h)
+    include/hipgraph/hipgraph_calgorithms.h
+    include/hipgraph/hipgraph_carray.h
+    include/hipgraph/hipgraph_ccentrality_algorithms.h
+    include/hipgraph/hipgraph_ccommunity_algorithms.h
+    include/hipgraph/hipgraph_ccoo.h
+    include/hipgraph/hipgraph_ccore_algorithms.h
+    include/hipgraph/hipgraph_cerror.h
+    include/hipgraph/hipgraph_cgraph_functions.h
+    include/hipgraph/hipgraph_cgraph_generators.h
+    include/hipgraph/hipgraph_cgraph.h
+    include/hipgraph/hipgraph_clabeling_algorithms.h
+    include/hipgraph/hipgraph_clookup_src_dst.h
+    include/hipgraph/hipgraph_cproperties.h
+    include/hipgraph/hipgraph_crandom.h
+    include/hipgraph/hipgraph_cresource_handle.h
+    include/hipgraph/hipgraph_csampling_algorithms.h
+    include/hipgraph/hipgraph_csimilarity_algorithms.h
+    include/hipgraph/hipgraph_ctraversal_algorithms.h
+    include/hipgraph/hipgraph_ctypes.h)
 
 set(hipgraph_cpp_headers_not_quite_public
     include/hipgraph/cpp/algorithms.hpp

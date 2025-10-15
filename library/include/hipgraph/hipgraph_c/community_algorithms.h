@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
+/*
  * Copyright (c) 2022-2024, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +14,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph_c/error.h"
-#include "hipgraph_c/graph.h"
-#include "hipgraph_c/graph_functions.h"
-#include "hipgraph_c/random.h"
-#include "hipgraph_c/resource_handle.h"
+#include "error.h"
+#include "graph.h"
+#include "graph_functions.h"
+#include "random.h"
+#include "resource_handle.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 /** @defgroup community Community algorithms
  */
 
@@ -36,11 +36,7 @@ extern "C" {
 /**
  * @brief     Opaque triangle counting result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_triangle_count_result_t;
+typedef struct cugraphriangle_count_result hipgraph_triangle_count_result_t;
 
 /**
  * @brief     Triangle Counting
@@ -57,27 +53,26 @@ typedef struct
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_triangle_count(const hipgraph_resource_handle_t*               handle,
-                            hipgraph_graph_t*                               graph,
-                            const hipgraph_type_erased_device_array_view_t* start,
-                            hipgraph_bool_t                                 do_expensive_check,
-                            hipgraph_triangle_count_result_t**              result,
-                            hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_triangle_count(const hipgraph_resource_handle_t* handle,
+                                            hipgraph_graph_t* graph,
+                                            const hipgraph_type_erased_device_array_view_t* start,
+                                            bool do_expensive_check,
+                                            hipgraph_triangle_count_result_t** result,
+                                            hipgraph_error_t** error);
 
 /**
  * @ingroup community
  * @brief     Get triangle counting vertices
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_triangle_count_result_get_vertices(hipgraph_triangle_count_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_triangle_count_result_get_vertices(
+  hipgraph_triangle_count_result_t* result);
 
 /**
  * @ingroup community
  * @brief     Get triangle counting counts
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_triangle_count_result_get_counts(hipgraph_triangle_count_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_triangle_count_result_get_counts(
+  hipgraph_triangle_count_result_t* result);
 
 /**
  * @ingroup community
@@ -90,11 +85,7 @@ HIPGRAPH_EXPORT void hipgraph_triangle_count_result_free(hipgraph_triangle_count
 /**
  * @brief     Opaque hierarchical clustering output
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_hierarchical_clustering_result_t;
+typedef struct hipgraph_hierarchical_clustering_result hipgraph_hierarchical_clustering_result_t;
 
 /**
  * @brief     Compute Louvain
@@ -115,23 +106,22 @@ typedef struct
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_louvain(const hipgraph_resource_handle_t*           handle,
-                     hipgraph_graph_t*                           graph,
-                     size_t                                      max_level,
-                     double                                      threshold,
-                     double                                      resolution,
-                     hipgraph_bool_t                             do_expensive_check,
-                     hipgraph_hierarchical_clustering_result_t** result,
-                     hipgraph_error_t**                          error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_louvain(const hipgraph_resource_handle_t* handle,
+                                     hipgraph_graph_t* graph,
+                                     size_t max_level,
+                                     double threshold,
+                                     double resolution,
+                                     bool do_expensive_check,
+                                     hipgraph_hierarchical_clustering_result_t** result,
+                                     hipgraph_error_t** error);
 
 /**
  * @brief     Compute Leiden
  *
  * @param [in]  handle       Handle for accessing resources
- * @param [inout] rng_state State of the random number generator, updated with each call
  * @param [in]  graph        Pointer to graph.  NOTE: Graph might be modified if the storage
  *                           needs to be transposed
+ * @param [in,out] rng_state State of the random number generator, updated with each call
  * @param [in]  max_level    Maximum level in hierarchy
  * @param [in]  resolution   Resolution parameter (gamma) in modularity formula.
  *                           This changes the size of the communities.  Higher resolutions
@@ -148,39 +138,36 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_leiden(const hipgraph_resource_handle_t*           handle,
-                    hipgraph_rng_state_t*                       rng_state,
-                    hipgraph_graph_t*                           graph,
-                    size_t                                      max_level,
-                    double                                      resolution,
-                    double                                      theta,
-                    hipgraph_bool_t                             do_expensive_check,
-                    hipgraph_hierarchical_clustering_result_t** result,
-                    hipgraph_error_t**                          error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_leiden(const hipgraph_resource_handle_t* handle,
+                                    hipgraph_rng_state_t* rng_state,
+                                    hipgraph_graph_t* graph,
+                                    size_t max_level,
+                                    double resolution,
+                                    double theta,
+                                    bool do_expensive_check,
+                                    hipgraph_hierarchical_clustering_result_t** result,
+                                    hipgraph_error_t** error);
 
 /**
  * @ingroup community
  * @brief     Get hierarchical clustering vertices
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_hierarchical_clustering_result_get_vertices(
-        hipgraph_hierarchical_clustering_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_hierarchical_clustering_result_get_vertices(
+  hipgraph_hierarchical_clustering_result_t* result);
 
 /**
  * @ingroup community
  * @brief     Get hierarchical clustering clusters
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_hierarchical_clustering_result_get_clusters(
-        hipgraph_hierarchical_clustering_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_hierarchical_clustering_result_get_clusters(
+  hipgraph_hierarchical_clustering_result_t* result);
 
 /**
  * @ingroup community
  * @brief     Get modularity
  */
 HIPGRAPH_EXPORT double hipgraph_hierarchical_clustering_result_get_modularity(
-    hipgraph_hierarchical_clustering_result_t* result);
+  hipgraph_hierarchical_clustering_result_t* result);
 
 /**
  * @ingroup community
@@ -188,20 +175,13 @@ HIPGRAPH_EXPORT double hipgraph_hierarchical_clustering_result_get_modularity(
  *
  * @param [in] result     The result from a sampling algorithm
  */
-HIPGRAPH_EXPORT void
-    hipgraph_hierarchical_clustering_result_free(hipgraph_hierarchical_clustering_result_t* result);
+HIPGRAPH_EXPORT void hipgraph_hierarchical_clustering_result_free(hipgraph_hierarchical_clustering_result_t* result);
 
 /**
- * @brief     Compute ECG clustering of the given graph
- *
- * ECG runs truncated Louvain on an ensemble of permutations of the input graph,
- * then uses the ensemble partitions to determine weights for the input graph.
- * The final result is found by running full Louvain on the input graph using
- * the determined weights. See https://arxiv.org/abs/1809.05578 for further
- * information.
+ * @brief     Compute ECG clustering
  *
  * @param [in]  handle        Handle for accessing resources
- * @param [inout] rng_state  State of the random number generator, updated with each call
+ * @param [in,out] rng_state  State of the random number generator, updated with each call
  * @param [in]  graph         Pointer to graph.  NOTE: Graph might be modified if the storage
  *                            needs to be transposed
  * @param [in]  min_weight    Minimum edge weight in final graph
@@ -220,18 +200,17 @@ HIPGRAPH_EXPORT void
  *                            be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_ecg(const hipgraph_resource_handle_t*           handle,
-                 hipgraph_rng_state_t*                       rng_state,
-                 hipgraph_graph_t*                           graph,
-                 double                                      min_weight,
-                 size_t                                      ensemble_size,
-                 size_t                                      max_level,
-                 double                                      threshold,
-                 double                                      resolution,
-                 hipgraph_bool_t                             do_expensive_check,
-                 hipgraph_hierarchical_clustering_result_t** result,
-                 hipgraph_error_t**                          error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_ecg(const hipgraph_resource_handle_t* handle,
+                                 hipgraph_rng_state_t* rng_state,
+                                 hipgraph_graph_t* graph,
+                                 double min_weight,
+                                 size_t ensemble_size,
+                                 size_t max_level,
+                                 double threshold,
+                                 double resolution,
+                                 bool do_expensive_check,
+                                 hipgraph_hierarchical_clustering_result_t** result,
+                                 hipgraph_error_t** error);
 
 /**
  * @brief   Extract ego graphs
@@ -248,14 +227,14 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                               be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_extract_ego(const hipgraph_resource_handle_t*               handle,
-                         hipgraph_graph_t*                               graph,
-                         const hipgraph_type_erased_device_array_view_t* source_vertices,
-                         size_t                                          radius,
-                         hipgraph_bool_t                                 do_expensive_check,
-                         hipgraph_induced_subgraph_result_t**            result,
-                         hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_extract_ego(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* source_vertices,
+  size_t radius,
+  bool do_expensive_check,
+  hipgraph_induced_subgraph_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief   Extract k truss for a graph
@@ -271,22 +250,17 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_k_truss_subgraph(const hipgraph_resource_handle_t*    handle,
-                              hipgraph_graph_t*                    graph,
-                              size_t                               k,
-                              hipgraph_bool_t                      do_expensive_check,
-                              hipgraph_induced_subgraph_result_t** result,
-                              hipgraph_error_t**                   error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_k_truss_subgraph(const hipgraph_resource_handle_t* handle,
+                                              hipgraph_graph_t* graph,
+                                              size_t k,
+                                              bool do_expensive_check,
+                                              hipgraph_induced_subgraph_result_t** result,
+                                              hipgraph_error_t** error);
 
 /**
  * @brief     Opaque clustering output
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_clustering_result_t;
+typedef struct hipgraph_clustering_result hipgraph_clustering_result_t;
 
 /**
  * @brief   Balanced cut clustering
@@ -310,18 +284,17 @@ typedef struct
  *                               be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_balanced_cut_clustering(const hipgraph_resource_handle_t* handle,
-                                     hipgraph_graph_t*                 graph,
-                                     size_t                            n_clusters,
-                                     size_t                            n_eigenvectors,
-                                     double                            evs_tolerance,
-                                     int                               evs_max_iterations,
-                                     double                            k_means_tolerance,
-                                     int                               k_means_max_iterations,
-                                     hipgraph_bool_t                   do_expensive_check,
-                                     hipgraph_clustering_result_t**    result,
-                                     hipgraph_error_t**                error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_balanced_cut_clustering(const hipgraph_resource_handle_t* handle,
+                                                     hipgraph_graph_t* graph,
+                                                     size_t n_clusters,
+                                                     size_t n_eigenvectors,
+                                                     double evs_tolerance,
+                                                     int evs_max_iterations,
+                                                     double k_means_tolerance,
+                                                     int k_means_max_iterations,
+                                                     bool do_expensive_check,
+                                                     hipgraph_clustering_result_t** result,
+                                                     hipgraph_error_t** error);
 
 /**
  * @brief   Spectral clustering
@@ -345,18 +318,18 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                               be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_spectral_modularity_maximization(const hipgraph_resource_handle_t* handle,
-                                              hipgraph_graph_t*                 graph,
-                                              size_t                            n_clusters,
-                                              size_t                            n_eigenvectors,
-                                              double                            evs_tolerance,
-                                              int                               evs_max_iterations,
-                                              double                            k_means_tolerance,
-                                              int                            k_means_max_iterations,
-                                              hipgraph_bool_t                do_expensive_check,
-                                              hipgraph_clustering_result_t** result,
-                                              hipgraph_error_t**             error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_spectral_modularity_maximization(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  size_t n_clusters,
+  size_t n_eigenvectors,
+  double evs_tolerance,
+  int evs_max_iterations,
+  double k_means_tolerance,
+  int k_means_max_iterations,
+  bool do_expensive_check,
+  hipgraph_clustering_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief   Compute modularity of the specified clustering
@@ -375,14 +348,14 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_analyze_clustering_modularity(const hipgraph_resource_handle_t* handle,
-                                           hipgraph_graph_t*                 graph,
-                                           size_t                            n_clusters,
-                                           const hipgraph_type_erased_device_array_view_t* vertices,
-                                           const hipgraph_type_erased_device_array_view_t* clusters,
-                                           double*                                         score,
-                                           hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_analyze_clustering_modularity(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  size_t n_clusters,
+  const hipgraph_type_erased_device_array_view_t* vertices,
+  const hipgraph_type_erased_device_array_view_t* clusters,
+  double* score,
+  hipgraph_error_t** error);
 
 /**
  * @brief   Compute edge cut of the specified clustering
@@ -401,14 +374,14 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_analyze_clustering_edge_cut(const hipgraph_resource_handle_t*               handle,
-                                         hipgraph_graph_t*                               graph,
-                                         size_t                                          n_clusters,
-                                         const hipgraph_type_erased_device_array_view_t* vertices,
-                                         const hipgraph_type_erased_device_array_view_t* clusters,
-                                         double*                                         score,
-                                         hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_analyze_clustering_edge_cut(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  size_t n_clusters,
+  const hipgraph_type_erased_device_array_view_t* vertices,
+  const hipgraph_type_erased_device_array_view_t* clusters,
+  double* score,
+  hipgraph_error_t** error);
 
 /**
  * @brief   Compute ratio cut of the specified clustering
@@ -427,26 +400,26 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_analyze_clustering_ratio_cut(const hipgraph_resource_handle_t* handle,
-                                          hipgraph_graph_t*                 graph,
-                                          size_t                            n_clusters,
-                                          const hipgraph_type_erased_device_array_view_t* vertices,
-                                          const hipgraph_type_erased_device_array_view_t* clusters,
-                                          double*                                         score,
-                                          hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_analyze_clustering_ratio_cut(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  size_t n_clusters,
+  const hipgraph_type_erased_device_array_view_t* vertices,
+  const hipgraph_type_erased_device_array_view_t* clusters,
+  double* score,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Get clustering vertices
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_clustering_result_get_vertices(hipgraph_clustering_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_clustering_result_get_vertices(
+  hipgraph_clustering_result_t* result);
 
 /**
  * @brief     Get clustering clusters
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_clustering_result_get_clusters(hipgraph_clustering_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_clustering_result_get_clusters(
+  hipgraph_clustering_result_t* result);
 
 /**
  * @brief     Free a clustering result

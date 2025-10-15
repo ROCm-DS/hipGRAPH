@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
+/*
  * Copyright (c) 2021-2024, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +14,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph/hipgraph_c/error.h"
-#include "hipgraph/hipgraph_c/graph.h"
-#include "hipgraph/hipgraph_c/resource_handle.h"
+#include "error.h"
+#include "graph.h"
+#include "resource_handle.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 /** @defgroup traversal Traversal Algorithms
  *  @ingroup c_api
  */
@@ -38,11 +38,7 @@ extern "C" {
  * Store the output of BFS or SSSP, computing predecessors and distances
  * from a seed.
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_paths_result_t;
+typedef struct hipgraph_paths_result hipgraph_paths_result_t;
 
 /**
  * @ingroup traversal
@@ -51,8 +47,8 @@ typedef struct
  * @param [in]   result   The result from bfs or sssp
  * @return type erased array of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_paths_result_get_vertices(hipgraph_paths_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_paths_result_get_vertices(
+  hipgraph_paths_result_t* result);
 
 /**
  * @ingroup traversal
@@ -61,8 +57,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from bfs or sssp
  * @return type erased array of distances
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_paths_result_get_distances(hipgraph_paths_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_paths_result_get_distances(
+  hipgraph_paths_result_t* result);
 
 /**
  * @ingroup traversal
@@ -70,11 +66,11 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  *
  * @param [in]   result   The result from bfs or sssp
  * @return type erased array of predecessors.  Value will be NULL if
- *         compute_predecessors was FALSE in the call to bfs or sssp that
+ *         compute_predecessors was false in the call to bfs or sssp that
  *         produced this result.
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_paths_result_get_predecessors(hipgraph_paths_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_paths_result_get_predecessors(
+  hipgraph_paths_result_t* result);
 
 /**
  * @ingroup traversal
@@ -94,7 +90,7 @@ HIPGRAPH_EXPORT void hipgraph_paths_result_free(hipgraph_paths_result_t* result)
  * @param [in]  handle       Handle for accessing resources
  * @param [in]  graph        Pointer to graph
  * FIXME:  Make this just [in], copy it if I need to temporarily modify internally
- * @param [inout]  sources  Array of source vertices.  NOTE: Array might be modified if
+ * @param [in,out]  sources  Array of source vertices.  NOTE: Array might be modified if
  *                           renumbering is enabled for the graph
  * @param [in]  direction_optimizing If set to true, this algorithm switches between the push based
  * breadth-first search and pull based breadth-first search depending on the size of the
@@ -111,17 +107,17 @@ HIPGRAPH_EXPORT void hipgraph_paths_result_free(hipgraph_paths_result_t* result)
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_bfs(const hipgraph_resource_handle_t* handle,
-                 hipgraph_graph_t*                 graph,
-                 // FIXME:  Make this const, copy it if I need to temporarily modify internally
-                 hipgraph_type_erased_device_array_view_t* sources,
-                 hipgraph_bool_t                           direction_optimizing,
-                 size_t                                    depth_limit,
-                 hipgraph_bool_t                           compute_predecessors,
-                 hipgraph_bool_t                           do_expensive_check,
-                 hipgraph_paths_result_t**                 result,
-                 hipgraph_error_t**                        error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_bfs(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  // FIXME:  Make this const, copy it if I need to temporarily modify internally
+  hipgraph_type_erased_device_array_view_t* sources,
+  bool direction_optimizing,
+  size_t depth_limit,
+  bool compute_predecessors,
+  bool do_expensive_check,
+  hipgraph_paths_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Perform single-source shortest-path to compute the minimum distances
@@ -145,22 +141,18 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_sssp(const hipgraph_resource_handle_t* handle,
-                                                    hipgraph_graph_t*                 graph,
-                                                    size_t                            source,
-                                                    double                            cutoff,
-                                                    hipgraph_bool_t           compute_predecessors,
-                                                    hipgraph_bool_t           do_expensive_check,
-                                                    hipgraph_paths_result_t** result,
-                                                    hipgraph_error_t**        error);
+                                  hipgraph_graph_t* graph,
+                                  size_t source,
+                                  double cutoff,
+                                  bool compute_predecessors,
+                                  bool do_expensive_check,
+                                  hipgraph_paths_result_t** result,
+                                  hipgraph_error_t** error);
 
 /**
  * @brief     Opaque extract_paths result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_extract_paths_result_t;
+typedef struct hipgraph_extract_paths_result hipgraph_extract_paths_result_t;
 
 /**
  * @brief     Extract BFS or SSSP paths from a hipgraph_paths_result_t
@@ -174,21 +166,21 @@ typedef struct
  * @param [in]  graph        Pointer to graph.  NOTE: Graph might be modified if the storage
  *                           needs to be transposed
  * @param [in]  sources      Array of source vertices
- * @param [in]  paths_result       Output from the BFS call
+ * @param [in]  result       Output from the BFS call
  * @param [in]  destinations Array of destination vertices.
  * @param [out] result       Opaque pointer to extract_paths results
  * @param [out] error        Pointer to an error object storing details of any error.  Will
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_extract_paths(const hipgraph_resource_handle_t*               handle,
-                           hipgraph_graph_t*                               graph,
-                           const hipgraph_type_erased_device_array_view_t* sources,
-                           const hipgraph_paths_result_t*                  paths_result,
-                           const hipgraph_type_erased_device_array_view_t* destinations,
-                           hipgraph_extract_paths_result_t**               result,
-                           hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_extract_paths(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* sources,
+  const hipgraph_paths_result_t* paths_result,
+  const hipgraph_type_erased_device_array_view_t* destinations,
+  hipgraph_extract_paths_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Get the max path length from extract_paths result
@@ -196,8 +188,7 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  * @param [in]   result   The result from extract_paths
  * @return maximum path length
  */
-HIPGRAPH_EXPORT size_t
-    hipgraph_extract_paths_result_get_max_path_length(hipgraph_extract_paths_result_t* result);
+HIPGRAPH_EXPORT size_t hipgraph_extract_paths_result_get_max_path_length(hipgraph_extract_paths_result_t* result);
 
 /**
  * @ingroup traversal
@@ -206,8 +197,8 @@ HIPGRAPH_EXPORT size_t
  * @param [in]   result   The result from extract_paths
  * @return type erased array pointing to the matrix in device memory
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_extract_paths_result_get_paths(hipgraph_extract_paths_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_extract_paths_result_get_paths(
+  hipgraph_extract_paths_result_t* result);
 
 /**
  * @ingroup traversal

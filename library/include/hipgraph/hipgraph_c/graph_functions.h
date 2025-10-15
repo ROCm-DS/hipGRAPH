@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
- * Copyright (c) 2021-2024, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
+/*
+ * Copyright (c) 2022-2025, NVIDIA CORPORATION.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +14,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph/hipgraph-export.h"
-#include "hipgraph/hipgraph_c/array.h"
-#include "hipgraph/hipgraph_c/graph.h"
-#include "hipgraph/hipgraph_c/resource_handle.h"
+#include "array.h"
+#include "graph.h"
+#include "resource_handle.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,11 +31,7 @@ extern "C" {
 /**
  * @brief       Opaque vertex pair type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_vertex_pairs_t;
+typedef struct hipgraph_vertex_pairs hipgraph_vertex_pairs_t;
 
 /**
  * @brief       Create vertex_pairs
@@ -53,13 +48,13 @@ typedef struct
  *                           be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_create_vertex_pairs(const hipgraph_resource_handle_t*               handle,
-                                 hipgraph_graph_t*                               graph,
-                                 const hipgraph_type_erased_device_array_view_t* first,
-                                 const hipgraph_type_erased_device_array_view_t* second,
-                                 hipgraph_vertex_pairs_t**                       vertex_pairs,
-                                 hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_create_vertex_pairs(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* first,
+  const hipgraph_type_erased_device_array_view_t* second,
+  hipgraph_vertex_pairs_t** vertex_pairs,
+  hipgraph_error_t** error);
 
 /**
  * @brief       Get the first vertex id array
@@ -67,8 +62,8 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  * @param [in]     vertex_pairs   A vertex_pairs
  * @return type erased array of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_vertex_pairs_get_first(hipgraph_vertex_pairs_t* vertex_pairs);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_vertex_pairs_get_first(
+  hipgraph_vertex_pairs_t* vertex_pairs);
 
 /**
  * @brief       Get the second vertex id array
@@ -76,8 +71,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]     vertex_pairs   A vertex_pairs
  * @return type erased array of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_vertex_pairs_get_second(hipgraph_vertex_pairs_t* vertex_pairs);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_vertex_pairs_get_second(
+  hipgraph_vertex_pairs_t* vertex_pairs);
 
 /**
  * @brief     Free vertex pair
@@ -101,88 +96,95 @@ HIPGRAPH_EXPORT void hipgraph_vertex_pairs_free(hipgraph_vertex_pairs_t* vertex_
  *                             be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_two_hop_neighbors(const hipgraph_resource_handle_t*               handle,
-                               hipgraph_graph_t*                               graph,
-                               const hipgraph_type_erased_device_array_view_t* start_vertices,
-                               hipgraph_bool_t                                 do_expensive_check,
-                               hipgraph_vertex_pairs_t**                       result,
-                               hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_two_hop_neighbors(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* start_vertices,
+  bool do_expensive_check,
+  hipgraph_vertex_pairs_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief       Opaque induced subgraph type
+ *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_t
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_induced_subgraph_result_t;
+typedef struct hipgraph_induced_subgraph_result hipgraph_induced_subgraph_result_t;
 
 /**
  * @brief       Get the source vertex ids
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_sources
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of source vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_sources(hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_sources(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief       Get the destination vertex ids
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_destinations
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of destination vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_destinations(
-        hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_destinations(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief       Get the edge weights
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_edge_weights
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of edge weights
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_edge_weights(
-        hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_edge_weights(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief       Get the edge ids
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_edge_ids
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of edge ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_edge_ids(hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_edge_ids(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief       Get the edge types
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_edge_type_ids
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of edge types
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_edge_type_ids(
-        hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_edge_type_ids(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief       Get the subgraph offsets
  *
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_get_edge_offsets
+ *
  * @param [in]     induced_subgraph   Opaque pointer to induced subgraph
  * @return type erased array view of subgraph identifiers
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_induced_subgraph_get_subgraph_offsets(
-        hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_induced_subgraph_get_subgraph_offsets(
+  hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief     Free induced subgraph
  *
- * @param [in]    induced_subgraph   Opaque pointer to induced subgraph
+ * @deprecated  This API will be deleted, use hipgraph_edgelist_free
+ *
+ * @param [in]    induced subgraph   Opaque pointer to induced subgraph
  */
-HIPGRAPH_EXPORT void
-    hipgraph_induced_subgraph_result_free(hipgraph_induced_subgraph_result_t* induced_subgraph);
+HIPGRAPH_EXPORT void hipgraph_induced_subgraph_result_free(hipgraph_induced_subgraph_result_t* induced_subgraph);
 
 /**
  * @brief      Extract induced subgraph(s)
@@ -208,13 +210,13 @@ HIPGRAPH_EXPORT void
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_extract_induced_subgraph(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* subgraph_offsets,
-    const hipgraph_type_erased_device_array_view_t* subgraph_vertices,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_induced_subgraph_result_t**            result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* subgraph_offsets,
+  const hipgraph_type_erased_device_array_view_t* subgraph_vertices,
+  bool do_expensive_check,
+  hipgraph_induced_subgraph_result_t** result,
+  hipgraph_error_t** error);
 
 // FIXME: Rename the return type
 /**
@@ -234,24 +236,39 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_extract_induced_subgraph(
  *                                be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_allgather(const hipgraph_resource_handle_t*               handle,
-                       const hipgraph_type_erased_device_array_view_t* src,
-                       const hipgraph_type_erased_device_array_view_t* dst,
-                       const hipgraph_type_erased_device_array_view_t* weights,
-                       const hipgraph_type_erased_device_array_view_t* edge_ids,
-                       const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                       hipgraph_induced_subgraph_result_t**            result,
-                       hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_allgather(const hipgraph_resource_handle_t* handle,
+                                       const hipgraph_type_erased_device_array_view_t* src,
+                                       const hipgraph_type_erased_device_array_view_t* dst,
+                                       const hipgraph_type_erased_device_array_view_t* weights,
+                                       const hipgraph_type_erased_device_array_view_t* edge_ids,
+                                       const hipgraph_type_erased_device_array_view_t* edge_type_ids,
+                                       hipgraph_induced_subgraph_result_t** result,
+                                       hipgraph_error_t** error);
+
+/**
+ * @brief      Count multi_edges
+ *
+ * Count the number of multi-edges in the graph
+ *
+ * @param [in]  handle              Handle for accessing resources.
+ * @param [in]  graph               Pointer to graph
+ * @param [in]  do_expensive_check  A flag to run expensive checks for input arguments (if set to
+ * true)
+ * @param [out] result              Where to store the count of multi-edges
+ * @param [out] error               Pointer to an error object storing details of any error.  Will
+ *                                  be populated if error code is not HIPGRAPH_SUCCESS
+ * @return error code
+ */
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_count_multi_edges(const hipgraph_resource_handle_t* handle,
+                                               hipgraph_graph_t* graph,
+                                               bool do_expensive_check,
+                                               size_t* result,
+                                               hipgraph_error_t** error);
 
 /**
  * @brief       Opaque degree result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_degrees_result_t;
+typedef struct hipgraph_degrees_result hipgraph_degrees_result_t;
 
 /**
  * @brief      Compute in degrees
@@ -268,13 +285,13 @@ typedef struct
  *                                  be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_in_degrees(const hipgraph_resource_handle_t*               handle,
-                        hipgraph_graph_t*                               graph,
-                        const hipgraph_type_erased_device_array_view_t* source_vertices,
-                        hipgraph_bool_t                                 do_expensive_check,
-                        hipgraph_degrees_result_t**                     result,
-                        hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_in_degrees(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* source_vertices,
+  bool do_expensive_check,
+  hipgraph_degrees_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief      Compute out degrees
@@ -291,13 +308,13 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                                  be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_out_degrees(const hipgraph_resource_handle_t*               handle,
-                         hipgraph_graph_t*                               graph,
-                         const hipgraph_type_erased_device_array_view_t* source_vertices,
-                         hipgraph_bool_t                                 do_expensive_check,
-                         hipgraph_degrees_result_t**                     result,
-                         hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_out_degrees(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* source_vertices,
+  bool do_expensive_check,
+  hipgraph_degrees_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief      Compute degrees
@@ -314,13 +331,12 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                                  be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_degrees(const hipgraph_resource_handle_t*               handle,
-                     hipgraph_graph_t*                               graph,
-                     const hipgraph_type_erased_device_array_view_t* source_vertices,
-                     hipgraph_bool_t                                 do_expensive_check,
-                     hipgraph_degrees_result_t**                     result,
-                     hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_degrees(const hipgraph_resource_handle_t* handle,
+                                     hipgraph_graph_t* graph,
+                                     const hipgraph_type_erased_device_array_view_t* source_vertices,
+                                     bool do_expensive_check,
+                                     hipgraph_degrees_result_t** result,
+                                     hipgraph_error_t** error);
 
 /**
  * @brief       Get the vertex ids
@@ -328,8 +344,8 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  * @param [in]     degrees_result   Opaque pointer to degree result
  * @return type erased array view of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_degrees_result_get_vertices(hipgraph_degrees_result_t* degrees_result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_degrees_result_get_vertices(
+  hipgraph_degrees_result_t* degrees_result);
 
 /**
  * @brief       Get the in degrees
@@ -337,8 +353,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]     degrees_result   Opaque pointer to degree result
  * @return type erased array view of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_degrees_result_get_in_degrees(hipgraph_degrees_result_t* degrees_result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_degrees_result_get_in_degrees(
+  hipgraph_degrees_result_t* degrees_result);
 
 /**
  * @brief       Get the out degrees
@@ -349,8 +365,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]     degrees_result   Opaque pointer to degree result
  * @return type erased array view of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_degrees_result_get_out_degrees(hipgraph_degrees_result_t* degrees_result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_degrees_result_get_out_degrees(
+  hipgraph_degrees_result_t* degrees_result);
 
 /**
  * @brief     Free degree result
@@ -358,6 +374,111 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]    degrees_result   Opaque pointer to degree result
  */
 HIPGRAPH_EXPORT void hipgraph_degrees_result_free(hipgraph_degrees_result_t* degrees_result);
+
+/**
+ * @brief       Opaque edgelist type
+ *
+ */
+typedef struct hipgraph_edgelist hipgraph_edgelist_t;
+
+/**
+ * @brief       Get the source vertex ids
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of source vertex ids
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_sources(hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Get the destination vertex ids
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of destination vertex ids
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_destinations(
+  hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Get the edge weights
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of edge weights
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_edge_weights(
+  hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Get the edge ids
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of edge ids
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_edge_ids(
+  hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Get the edge types
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of edge types
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_edge_type_ids(
+  hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Get the edge offsets
+ *
+ * @param [in]     edgelist   Opaque pointer to edgelist
+ * @return type erased array view of subgraph identifiers
+ */
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edgelist_get_edge_offsets(
+  hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief     Free edgelist
+ *
+ * @param [in]    edgelist   Opaque pointer to edgelist
+ */
+HIPGRAPH_EXPORT void hipgraph_edgelist_free(hipgraph_edgelist_t* edgelist);
+
+/**
+ * @brief       Construct the edge list from the graph view object.
+ *
+ * @param [in]  handle              Handle for accessing resources
+ * @param [in]  graph               Graph to operate on
+ * @param [in]  do_expensive_check  A flag to run expensive checks for input arguments (if set to
+ * true)
+ * @param [out] result              Opaque pointer to edgelist
+ * @param [out] error               Pointer to an error object storing details of any error.  Will
+ *                                  be populated if error code is not HIPGRAPH_SUCCESS
+ * @return error code
+ */
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_decompress_to_edgelist(const hipgraph_resource_handle_t* handle,
+                                                    hipgraph_graph_t* graph,
+                                                    bool do_expensive_check,
+                                                    hipgraph_edgelist_t** result,
+                                                    hipgraph_error_t** error);
+
+/**
+ * @brief     Renumber arbitrary edgelist
+ *
+ * This function is designed to assist renumbering graph vertices in the case where the
+ * the global vertex id list exceeds the GPU memory.  Renumbering is done in-place in the
+ * supplied @p src and @p dst parameters.
+ *
+ * @param [in]     handle         Handle for accessing resources
+ * @param [in]     renumber_map   Host array with the renumber map
+ * @param [in/out] srcs           Device array of src vertices to renumber
+ * @param [in/out] dsts           Device array of dst vertices to renumber
+ * @param [out] error             Pointer to an error object storing details of any error.  Will
+ *                                be populated if error code is not HIPGRAPH_SUCCESS
+ */
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_renumber_arbitrary_edgelist(
+  const hipgraph_resource_handle_t* handle,
+  const hipgraph_type_erased_host_array_view_t* renumber_map,
+  hipgraph_type_erased_device_array_view_t* srcs,
+  hipgraph_type_erased_device_array_view_t* dsts,
+  hipgraph_error_t** error);
 
 #ifdef __cplusplus
 }

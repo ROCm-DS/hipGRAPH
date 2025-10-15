@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
- * Copyright (c) 2021-2023, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
+/*
+ * Copyright (c) 2021-2024, NVIDIA CORPORATION.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,72 +14,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph/hipgraph_c/array.h"
+#include "array.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct
-{
-    int32_t align_;
-} hipgraph_graph_t;
+typedef struct hipgraph_graph hipgraph_graph_t;
 
-typedef struct
-{
-    int32_t align_;
-} hipgraph_data_mask_t;
+typedef struct hipgraph_data_mask hipgraph_data_mask_t;
 
-typedef struct
-{
-    hipgraph_bool_t is_symmetric;
-    hipgraph_bool_t is_multigraph;
+typedef struct {
+  bool is_symmetric;
+  bool is_multigraph;
 } hipgraph_graph_properties_t;
-
-/**
- * @brief     Construct an SG graph
- *
- * @deprecated  This API will be deleted, use hipgraph_graph_create_sg instead
- *
- * @param [in]  handle         Handle for accessing resources
- * @param [in]  properties     Properties of the constructed graph
- * @param [in]  src            Device array containing the source vertex ids.
- * @param [in]  dst            Device array containing the destination vertex ids
- * @param [in]  weights        Device array containing the edge weights.  Note that an unweighted
- *                             graph can be created by passing weights == NULL.
- * @param [in]  edge_ids       Device array containing the edge ids for each edge.  Optional
-                               argument that can be NULL if edge ids are not used.
- * @param [in]  edge_type_ids  Device array containing the edge types for each edge.  Optional
-                               argument that can be NULL if edge types are not used.
- * @param [in]  store_transposed If true create the graph initially in transposed format
- * @param [in]  renumber       If true, renumber vertices to make an efficient data structure.
- *    If false, do not renumber.  Renumbering enables some significant optimizations within
- *    the graph primitives library, so it is strongly encouraged.  Renumbering is required if
- *    the vertices are not sequential integer values from 0 to num_vertices.
- * @param [in]  do_expensive_check    If true, do expensive checks to validate the input data
- *    is consistent with software assumptions.  If false bypass these checks.
- * @param [out] graph          A pointer to the graph object
- * @param [out] error          Pointer to an error object storing details of any error.  Will
- *                             be populated if error code is not HIPGRAPH_SUCCESS
- *
- * @return error code
- */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_sg_graph_create(const hipgraph_resource_handle_t*               handle,
-                             const hipgraph_graph_properties_t*              properties,
-                             const hipgraph_type_erased_device_array_view_t* src,
-                             const hipgraph_type_erased_device_array_view_t* dst,
-                             const hipgraph_type_erased_device_array_view_t* weights,
-                             const hipgraph_type_erased_device_array_view_t* edge_ids,
-                             const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                             hipgraph_bool_t                                 store_transposed,
-                             hipgraph_bool_t                                 renumber,
-                             hipgraph_bool_t                                 do_expensive_check,
-                             hipgraph_graph_t**                              graph,
-                             hipgraph_error_t**                              error);
 
 /**
  * @brief     Construct an SG graph
@@ -112,6 +63,8 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  weights,
  *    or take the maximum weight), the caller should remove specific edges themselves and not rely
  *    on this flag.
+ * @param [in] symmetrize      If true, symmetrize the edgelist. The symmetrization of edges
+ * with edge_ids and/or edge_type_ids is currently not supported.
  * @param [in]  do_expensive_check    If true, do expensive checks to validate the input data
  *    is consistent with software assumptions.  If false bypass these checks.
  * @param [out] graph          A pointer to the graph object
@@ -120,64 +73,23 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_graph_create_sg(const hipgraph_resource_handle_t*               handle,
-                             const hipgraph_graph_properties_t*              properties,
-                             const hipgraph_type_erased_device_array_view_t* vertices,
-                             const hipgraph_type_erased_device_array_view_t* src,
-                             const hipgraph_type_erased_device_array_view_t* dst,
-                             const hipgraph_type_erased_device_array_view_t* weights,
-                             const hipgraph_type_erased_device_array_view_t* edge_ids,
-                             const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                             hipgraph_bool_t                                 store_transposed,
-                             hipgraph_bool_t                                 renumber,
-                             hipgraph_bool_t                                 drop_self_loops,
-                             hipgraph_bool_t                                 drop_multi_edges,
-                             hipgraph_bool_t                                 do_expensive_check,
-                             hipgraph_graph_t**                              graph,
-                             hipgraph_error_t**                              error);
-
-/**
- * @brief     Construct an SG graph from a CSR input
- *
- * @deprecated  This API will be deleted, use hipgraph_graph_create_sg_from_csr instead
- *
- * @param [in]  handle         Handle for accessing resources
- * @param [in]  properties     Properties of the constructed graph
- * @param [in]  offsets        Device array containing the CSR offsets array
- * @param [in]  indices        Device array containing the destination vertex ids
- * @param [in]  weights        Device array containing the edge weights.  Note that an unweighted
- *                             graph can be created by passing weights == NULL.
- * @param [in]  edge_ids       Device array containing the edge ids for each edge.  Optional
-                               argument that can be NULL if edge ids are not used.
- * @param [in]  edge_type_ids  Device array containing the edge types for each edge.  Optional
-                               argument that can be NULL if edge types are not used.
- * @param [in]  store_transposed If true create the graph initially in transposed format
- * @param [in]  renumber       If true, renumber vertices to make an efficient data structure.
- *    If false, do not renumber.  Renumbering enables some significant optimizations within
- *    the graph primitives library, so it is strongly encouraged.  Renumbering is required if
- *    the vertices are not sequential integer values from 0 to num_vertices.
- * @param [in]  do_expensive_check    If true, do expensive checks to validate the input data
- *    is consistent with software assumptions.  If false bypass these checks.
- * @param [out] graph          A pointer to the graph object
- * @param [out] error          Pointer to an error object storing details of any error.  Will
- *                             be populated if error code is not HIPGRAPH_SUCCESS
- *
- * @return error code
- */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_sg_graph_create_from_csr(const hipgraph_resource_handle_t*               handle,
-                                      const hipgraph_graph_properties_t*              properties,
-                                      const hipgraph_type_erased_device_array_view_t* offsets,
-                                      const hipgraph_type_erased_device_array_view_t* indices,
-                                      const hipgraph_type_erased_device_array_view_t* weights,
-                                      const hipgraph_type_erased_device_array_view_t* edge_ids,
-                                      const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                                      hipgraph_bool_t    store_transposed,
-                                      hipgraph_bool_t    renumber,
-                                      hipgraph_bool_t    do_expensive_check,
-                                      hipgraph_graph_t** graph,
-                                      hipgraph_error_t** error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_create_sg(
+  const hipgraph_resource_handle_t* handle,
+  const hipgraph_graph_properties_t* properties,
+  const hipgraph_type_erased_device_array_view_t* vertices,
+  const hipgraph_type_erased_device_array_view_t* src,
+  const hipgraph_type_erased_device_array_view_t* dst,
+  const hipgraph_type_erased_device_array_view_t* weights,
+  const hipgraph_type_erased_device_array_view_t* edge_ids,
+  const hipgraph_type_erased_device_array_view_t* edge_type_ids,
+  bool store_transposed,
+  bool renumber,
+  bool drop_self_loops,
+  bool drop_multi_edges,
+  bool symmetrize,
+  bool do_expensive_check,
+  hipgraph_graph_t** graph,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Construct an SG graph from a CSR input
@@ -197,6 +109,8 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *    If false, do not renumber.  Renumbering enables some significant optimizations within
  *    the graph primitives library, so it is strongly encouraged.  Renumbering is required if
  *    the vertices are not sequential integer values from 0 to num_vertices.
+ * @param [in]  symmetrize     If true, symmetrize the edgelist. The symmetrization of edges
+ * with edge_ids and/or edge_type_ids is currently not supported.
  * @param [in]  do_expensive_check    If true, do expensive checks to validate the input data
  *    is consistent with software assumptions.  If false bypass these checks.
  * @param [out] graph          A pointer to the graph object
@@ -205,60 +119,20 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_graph_create_sg_from_csr(const hipgraph_resource_handle_t*               handle,
-                                      const hipgraph_graph_properties_t*              properties,
-                                      const hipgraph_type_erased_device_array_view_t* offsets,
-                                      const hipgraph_type_erased_device_array_view_t* indices,
-                                      const hipgraph_type_erased_device_array_view_t* weights,
-                                      const hipgraph_type_erased_device_array_view_t* edge_ids,
-                                      const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                                      hipgraph_bool_t    store_transposed,
-                                      hipgraph_bool_t    renumber,
-                                      hipgraph_bool_t    do_expensive_check,
-                                      hipgraph_graph_t** graph,
-                                      hipgraph_error_t** error);
-
-/**
- * @brief     Construct an MG graph
- *
- * @deprecated  This API will be deleted, use hipgraph_graph_create_mg instead
- *
- * @param [in]  handle          Handle for accessing resources
- * @param [in]  properties      Properties of the constructed graph
- * @param [in]  src             Device array containing the source vertex ids
- * @param [in]  dst             Device array containing the destination vertex ids
- * @param [in]  weights         Device array containing the edge weights.  Note that an unweighted
- *                              graph can be created by passing weights == NULL.  If a weighted
- *                              graph is to be created, the weights device array should be created
- *                              on each rank, but the pointer can be NULL and the size 0
- *                              if there are no inputs provided by this rank
- * @param [in]  edge_ids        Device array containing the edge ids for each edge.  Optional
-                                argument that can be NULL if edge ids are not used.
- * @param [in]  edge_type_ids  Device array containing the edge types for each edge.  Optional
-                                argument that can be NULL if edge types are not used.
- * @param [in]  store_transposed If true create the graph initially in transposed format
- * @param [in]  num_edges       Number of edges
- * @param [in]  do_expensive_check  If true, do expensive checks to validate the input data
- *    is consistent with software assumptions.  If false bypass these checks.
- * @param [out] graph           A pointer to the graph object
- * @param [out] error           Pointer to an error object storing details of any error.  Will
- *                              be populated if error code is not HIPGRAPH_SUCCESS
- * @return error code
- */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_mg_graph_create(const hipgraph_resource_handle_t*               handle,
-                             const hipgraph_graph_properties_t*              properties,
-                             const hipgraph_type_erased_device_array_view_t* src,
-                             const hipgraph_type_erased_device_array_view_t* dst,
-                             const hipgraph_type_erased_device_array_view_t* weights,
-                             const hipgraph_type_erased_device_array_view_t* edge_ids,
-                             const hipgraph_type_erased_device_array_view_t* edge_type_ids,
-                             hipgraph_bool_t                                 store_transposed,
-                             size_t                                          num_edges,
-                             hipgraph_bool_t                                 do_expensive_check,
-                             hipgraph_graph_t**                              graph,
-                             hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_create_sg_from_csr(
+  const hipgraph_resource_handle_t* handle,
+  const hipgraph_graph_properties_t* properties,
+  const hipgraph_type_erased_device_array_view_t* offsets,
+  const hipgraph_type_erased_device_array_view_t* indices,
+  const hipgraph_type_erased_device_array_view_t* weights,
+  const hipgraph_type_erased_device_array_view_t* edge_ids,
+  const hipgraph_type_erased_device_array_view_t* edge_type_ids,
+  bool store_transposed,
+  bool renumber,
+  bool symmetrize,
+  bool do_expensive_check,
+  hipgraph_graph_t** graph,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Construct an MG graph
@@ -296,6 +170,8 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *    Note that setting this flag will arbitrarily select one instance of a multi edge to be the
  *    edge that survives.  If the edges have properties that should be honored (e.g. sum the
  * weights, or take the maximum weight), the caller should do that on not rely on this flag.
+ * @param [in]  symmetrize      If true, symmetrize the edgelist. The symmetrization of edges
+ * with edge_ids and/or edge_type_ids is currently not supported.
  * @param [in]  do_expensive_check  If true, do expensive checks to validate the input data
  *    is consistent with software assumptions.  If false bypass these checks.
  * @param [out] graph           A pointer to the graph object
@@ -303,22 +179,23 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_graph_create_mg(hipgraph_resource_handle_t const*                      handle,
-                             hipgraph_graph_properties_t const*                     properties,
-                             hipgraph_type_erased_device_array_view_t const* const* vertices,
-                             hipgraph_type_erased_device_array_view_t const* const* src,
-                             hipgraph_type_erased_device_array_view_t const* const* dst,
-                             hipgraph_type_erased_device_array_view_t const* const* weights,
-                             hipgraph_type_erased_device_array_view_t const* const* edge_ids,
-                             hipgraph_type_erased_device_array_view_t const* const* edge_type_ids,
-                             hipgraph_bool_t    store_transposed,
-                             size_t             num_arrays,
-                             hipgraph_bool_t    drop_self_loops,
-                             hipgraph_bool_t    drop_multi_edges,
-                             hipgraph_bool_t    do_expensive_check,
-                             hipgraph_graph_t** graph,
-                             hipgraph_error_t** error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_create_mg(
+  hipgraph_resource_handle_t const* handle,
+  hipgraph_graph_properties_t const* properties,
+  hipgraph_type_erased_device_array_view_t const* const* vertices,
+  hipgraph_type_erased_device_array_view_t const* const* src,
+  hipgraph_type_erased_device_array_view_t const* const* dst,
+  hipgraph_type_erased_device_array_view_t const* const* weights,
+  hipgraph_type_erased_device_array_view_t const* const* edge_ids,
+  hipgraph_type_erased_device_array_view_t const* const* edge_type_ids,
+  bool store_transposed,
+  size_t num_arrays,
+  bool drop_self_loops,
+  bool drop_multi_edges,
+  bool symmetrize,
+  bool do_expensive_check,
+  hipgraph_graph_t** graph,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Destroy an graph
@@ -326,24 +203,6 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  * @param [in]  graph  A pointer to the graph object to destroy
  */
 HIPGRAPH_EXPORT void hipgraph_graph_free(hipgraph_graph_t* graph);
-
-/**
- * @brief     Destroy an SG graph
- *
- * @deprecated  This API will be deleted, use hipgraph_graph_free instead
- *
- * @param [in]  graph  A pointer to the graph object to destroy
- */
-HIPGRAPH_EXPORT void hipgraph_sg_graph_free(hipgraph_graph_t* graph);
-
-/**
- * @brief     Destroy an MG graph
- *
- * @deprecated  This API will be deleted, use hipgraph_graph_free instead
- *
- * @param [in]  graph  A pointer to the graph object to destroy
- */
-HIPGRAPH_EXPORT void hipgraph_mg_graph_free(hipgraph_graph_t* graph);
 
 /**
  * @brief     Create a data mask
@@ -361,13 +220,13 @@ HIPGRAPH_EXPORT void hipgraph_mg_graph_free(hipgraph_graph_t* graph);
  *                              be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_data_mask_create(const hipgraph_resource_handle_t*               handle,
-                              const hipgraph_type_erased_device_array_view_t* vertex_bit_mask,
-                              const hipgraph_type_erased_device_array_view_t* edge_bit_mask,
-                              hipgraph_bool_t                                 complement,
-                              hipgraph_data_mask_t**                          mask,
-                              hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_data_mask_create(
+  const hipgraph_resource_handle_t* handle,
+  const hipgraph_type_erased_device_array_view_t* vertex_bit_mask,
+  const hipgraph_type_erased_device_array_view_t* edge_bit_mask,
+  bool complement,
+  hipgraph_data_mask_t** mask,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Get the data mask currently associated with a graph
@@ -380,9 +239,9 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_get_data_mask(hipgraph_graph_t*      graph,
-                                                                   hipgraph_data_mask_t** mask,
-                                                                   hipgraph_error_t**     error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_get_data_mask(hipgraph_graph_t* graph,
+                                                 hipgraph_data_mask_t** mask,
+                                                 hipgraph_error_t** error);
 
 /**
  * @brief     Associate a data mask with a graph
@@ -395,9 +254,9 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_get_data_mask(hipgraph_grap
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_add_data_mask(hipgraph_graph_t*     graph,
-                                                                   hipgraph_data_mask_t* mask,
-                                                                   hipgraph_error_t**    error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_add_data_mask(hipgraph_graph_t* graph,
+                                                 hipgraph_data_mask_t* mask,
+                                                 hipgraph_error_t** error);
 
 /**
  * @brief     Release the data mask currently associated with a graph
@@ -419,9 +278,9 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_add_data_mask(hipgraph_grap
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_release_data_mask(hipgraph_graph_t*      graph,
-                                                                       hipgraph_data_mask_t** mask,
-                                                                       hipgraph_error_t** error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_graph_release_data_mask(hipgraph_graph_t* graph,
+                                                     hipgraph_data_mask_t** mask,
+                                                     hipgraph_error_t** error);
 
 /**
  * @brief     Destroy a data mask

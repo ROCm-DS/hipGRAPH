@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
- * Copyright (c) 2021-2022, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
+/*
+ * Copyright (c) 2024, NVIDIA CORPORATION.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +14,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph/hipgraph_c/error.h"
-#include "hipgraph/hipgraph_c/graph.h"
-#include "hipgraph/hipgraph_c/resource_handle.h"
+#include "error.h"
+#include "graph.h"
+#include "resource_handle.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 /** @defgroup c_api hipGRAPH C API
  *  @{
  */
 
-#include "hipgraph/hipgraph_c/centrality_algorithms.h"
-#include "hipgraph/hipgraph_c/community_algorithms.h"
-#include "hipgraph/hipgraph_c/core_algorithms.h"
-#include "hipgraph/hipgraph_c/labeling_algorithms.h"
-#include "hipgraph/hipgraph_c/sampling_algorithms.h"
-#include "hipgraph/hipgraph_c/similarity_algorithms.h"
-#include "hipgraph/hipgraph_c/traversal_algorithms.h"
+#include "centrality_algorithms.h"
+#include "community_algorithms.h"
+#include "core_algorithms.h"
+#include "labeling_algorithms.h"
+#include "lookup_src_dst.h"
+#include "sampling_algorithms.h"
+#include "similarity_algorithms.h"
+#include "traversal_algorithms.h"
 
-/**
+
+#include "hipgraph/hipgraph-common.h"/**
  *  @}
  */

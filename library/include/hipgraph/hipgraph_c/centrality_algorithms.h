@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, Advanced Micro Devices, Inc.
 // SPDX-License-Identifier: MIT
-/*! \file */
-/* ************************************************************************
+/*
  * Copyright (c) 2022-2023, NVIDIA CORPORATION.
- *
- * Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +14,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ************************************************************************ */
+ */
+
 #pragma once
 
-#include "hipgraph/hipgraph_c/array.h"
-#include "hipgraph/hipgraph_c/error.h"
-#include "hipgraph/hipgraph_c/graph.h"
-#include "hipgraph/hipgraph_c/random.h"
-#include "hipgraph/hipgraph_c/resource_handle.h"
+#include "array.h"
+#include "error.h"
+#include "graph.h"
+#include "random.h"
+#include "resource_handle.h"
 
+
+#include "hipgraph/hipgraph-common.h"
 /** @defgroup centrality Centrality algorithms
  */
 
@@ -36,11 +36,7 @@ extern "C" {
 /**
  * @brief     Opaque centrality result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_centrality_result_t;
+typedef struct hipgraph_centrality_result hipgraph_centrality_result_t;
 
 /**
  * @ingroup centrality
@@ -49,8 +45,8 @@ typedef struct
  * @param [in]   result   The result from a centrality algorithm
  * @return type erased array of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_centrality_result_get_vertices(hipgraph_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_centrality_result_get_vertices(
+  hipgraph_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -59,8 +55,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from a centrality algorithm
  * @return type erased array view of centrality values
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_centrality_result_get_values(hipgraph_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_centrality_result_get_values(
+  hipgraph_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -69,8 +65,7 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from a centrality algorithm
  * @return the number of iterations
  */
-HIPGRAPH_EXPORT size_t
-    hipgraph_centrality_result_get_num_iterations(hipgraph_centrality_result_t* result);
+HIPGRAPH_EXPORT size_t hipgraph_centrality_result_get_num_iterations(hipgraph_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -79,8 +74,7 @@ HIPGRAPH_EXPORT size_t
  * @param [in]   result   The result from a centrality algorithm
  * @return True if the centrality algorithm converged, false otherwise
  */
-HIPGRAPH_EXPORT hipgraph_bool_t
-    hipgraph_centrality_result_converged(hipgraph_centrality_result_t* result);
+HIPGRAPH_EXPORT bool_t hipgraph_centrality_result_converged(hipgraph_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -128,18 +122,18 @@ HIPGRAPH_EXPORT void hipgraph_centrality_result_free(hipgraph_centrality_result_
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_pagerank(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_values,
-    double                                          alpha,
-    double                                          epsilon,
-    size_t                                          max_iterations,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_centrality_result_t**                  result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_values,
+  double alpha,
+  double epsilon,
+  size_t max_iterations,
+  bool do_expensive_check,
+  hipgraph_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Compute pagerank
@@ -183,18 +177,18 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_pagerank(
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_pagerank_allow_nonconvergence(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_values,
-    double                                          alpha,
-    double                                          epsilon,
-    size_t                                          max_iterations,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_centrality_result_t**                  result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_values,
+  double alpha,
+  double epsilon,
+  size_t max_iterations,
+  bool do_expensive_check,
+  hipgraph_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Compute personalized pagerank
@@ -242,20 +236,20 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_pagerank_allow_nonconvergence(
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_personalized_pagerank(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_values,
-    const hipgraph_type_erased_device_array_view_t* personalization_vertices,
-    const hipgraph_type_erased_device_array_view_t* personalization_values,
-    double                                          alpha,
-    double                                          epsilon,
-    size_t                                          max_iterations,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_centrality_result_t**                  result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_values,
+  const hipgraph_type_erased_device_array_view_t* personalization_vertices,
+  const hipgraph_type_erased_device_array_view_t* personalization_values,
+  double alpha,
+  double epsilon,
+  size_t max_iterations,
+  bool do_expensive_check,
+  hipgraph_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Compute personalized pagerank
@@ -299,20 +293,20 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_personalized_pagerank(
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_personalized_pagerank_allow_nonconvergence(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
-    const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
-    const hipgraph_type_erased_device_array_view_t* initial_guess_values,
-    const hipgraph_type_erased_device_array_view_t* personalization_vertices,
-    const hipgraph_type_erased_device_array_view_t* personalization_values,
-    double                                          alpha,
-    double                                          epsilon,
-    size_t                                          max_iterations,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_centrality_result_t**                  result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_vertices,
+  const hipgraph_type_erased_device_array_view_t* precomputed_vertex_out_weight_sums,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_vertices,
+  const hipgraph_type_erased_device_array_view_t* initial_guess_values,
+  const hipgraph_type_erased_device_array_view_t* personalization_vertices,
+  const hipgraph_type_erased_device_array_view_t* personalization_values,
+  double alpha,
+  double epsilon,
+  size_t max_iterations,
+  bool do_expensive_check,
+  hipgraph_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Compute eigenvector centrality
@@ -332,14 +326,13 @@ HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_personalized_pagerank_allow_nonco
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_eigenvector_centrality(const hipgraph_resource_handle_t* handle,
-                                    hipgraph_graph_t*                 graph,
-                                    double                            epsilon,
-                                    size_t                            max_iterations,
-                                    hipgraph_bool_t                   do_expensive_check,
-                                    hipgraph_centrality_result_t**    result,
-                                    hipgraph_error_t**                error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_eigenvector_centrality(const hipgraph_resource_handle_t* handle,
+                                                    hipgraph_graph_t* graph,
+                                                    double epsilon,
+                                                    size_t max_iterations,
+                                                    bool do_expensive_check,
+                                                    hipgraph_centrality_result_t** result,
+                                                    hipgraph_error_t** error);
 
 /**
  * @brief     Compute katz centrality
@@ -366,17 +359,16 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_katz_centrality(const hipgraph_resource_handle_t*               handle,
-                             hipgraph_graph_t*                               graph,
-                             const hipgraph_type_erased_device_array_view_t* betas,
-                             double                                          alpha,
-                             double                                          beta,
-                             double                                          epsilon,
-                             size_t                                          max_iterations,
-                             hipgraph_bool_t                                 do_expensive_check,
-                             hipgraph_centrality_result_t**                  result,
-                             hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_katz_centrality(const hipgraph_resource_handle_t* handle,
+                                             hipgraph_graph_t* graph,
+                                             const hipgraph_type_erased_device_array_view_t* betas,
+                                             double alpha,
+                                             double beta,
+                                             double epsilon,
+                                             size_t max_iterations,
+                                             bool do_expensive_check,
+                                             hipgraph_centrality_result_t** result,
+                                             hipgraph_error_t** error);
 
 /**
  * @brief     Compute betweenness centrality
@@ -404,24 +396,20 @@ HIPGRAPH_EXPORT hipgraph_error_code_t
  *                                 be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_betweenness_centrality(const hipgraph_resource_handle_t*               handle,
-                                    hipgraph_graph_t*                               graph,
-                                    const hipgraph_type_erased_device_array_view_t* vertex_list,
-                                    hipgraph_bool_t                                 normalized,
-                                    hipgraph_bool_t                include_endpoints,
-                                    hipgraph_bool_t                do_expensive_check,
-                                    hipgraph_centrality_result_t** result,
-                                    hipgraph_error_t**             error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_betweenness_centrality(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* vertex_list,
+  bool normalized,
+  bool include_endpoints,
+  bool do_expensive_check,
+  hipgraph_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Opaque edge centrality result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_edge_centrality_result_t;
+typedef struct hipgraph_edge_centrality_result hipgraph_edge_centrality_result_t;
 
 /**
  * @ingroup centrality
@@ -430,8 +418,8 @@ typedef struct
  * @param [in]   result   The result from an edge centrality algorithm
  * @return type erased array of src vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_edge_centrality_result_get_src_vertices(hipgraph_edge_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edge_centrality_result_get_src_vertices(
+  hipgraph_edge_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -440,8 +428,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from an edge centrality algorithm
  * @return type erased array of dst vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_edge_centrality_result_get_dst_vertices(hipgraph_edge_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edge_centrality_result_get_dst_vertices(
+  hipgraph_edge_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -450,8 +438,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from an edge centrality algorithm
  * @return type erased array of edge ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_edge_centrality_result_get_edge_ids(hipgraph_edge_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edge_centrality_result_get_edge_ids(
+  hipgraph_edge_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -460,8 +448,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from an edge centrality algorithm
  * @return type erased array view of centrality values
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_edge_centrality_result_get_values(hipgraph_edge_centrality_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_edge_centrality_result_get_values(
+  hipgraph_edge_centrality_result_t* result);
 
 /**
  * @ingroup centrality
@@ -469,8 +457,7 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  *
  * @param [in]   result   The result from a centrality algorithm
  */
-HIPGRAPH_EXPORT void
-    hipgraph_edge_centrality_result_free(hipgraph_edge_centrality_result_t* result);
+HIPGRAPH_EXPORT void hipgraph_edge_centrality_result_free(hipgraph_edge_centrality_result_t* result);
 
 /**
  * @brief     Compute edge betweenness centrality
@@ -496,22 +483,18 @@ HIPGRAPH_EXPORT void
  * @return error code
  */
 HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_edge_betweenness_centrality(
-    const hipgraph_resource_handle_t*               handle,
-    hipgraph_graph_t*                               graph,
-    const hipgraph_type_erased_device_array_view_t* vertex_list,
-    hipgraph_bool_t                                 normalized,
-    hipgraph_bool_t                                 do_expensive_check,
-    hipgraph_edge_centrality_result_t**             result,
-    hipgraph_error_t**                              error);
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  const hipgraph_type_erased_device_array_view_t* vertex_list,
+  bool normalized,
+  bool do_expensive_check,
+  hipgraph_edge_centrality_result_t** result,
+  hipgraph_error_t** error);
 
 /**
  * @brief     Opaque hits result type
  */
-typedef struct
-{
-    /** @brief align_ result type */
-    int32_t align_;
-} hipgraph_hits_result_t;
+typedef struct hipgraph_hits_result hipgraph_hits_result_t;
 
 /**
  * @ingroup centrality
@@ -520,8 +503,8 @@ typedef struct
  * @param [in]   result   The result from hits
  * @return type erased array of vertex ids
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_hits_result_get_vertices(hipgraph_hits_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_hits_result_get_vertices(
+  hipgraph_hits_result_t* result);
 
 /**
  * @ingroup centrality
@@ -530,8 +513,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from hits
  * @return type erased array of hubs values
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_hits_result_get_hubs(hipgraph_hits_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_hits_result_get_hubs(
+  hipgraph_hits_result_t* result);
 
 /**
  * @ingroup centrality
@@ -540,8 +523,8 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from hits
  * @return type erased array of authorities values
  */
-HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
-    hipgraph_hits_result_get_authorities(hipgraph_hits_result_t* result);
+HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t* hipgraph_hits_result_get_authorities(
+  hipgraph_hits_result_t* result);
 
 /**
  * @ingroup centrality
@@ -550,8 +533,7 @@ HIPGRAPH_EXPORT hipgraph_type_erased_device_array_view_t*
  * @param [in]   result   The result from hits
  * @return score differences
  */
-HIPGRAPH_EXPORT double
-    hipgraph_hits_result_get_hub_score_differences(hipgraph_hits_result_t* result);
+HIPGRAPH_EXPORT double hipgraph_hits_result_get_hub_score_differences(hipgraph_hits_result_t* result);
 
 /**
  * @ingroup centrality
@@ -560,8 +542,7 @@ HIPGRAPH_EXPORT double
  * @param [in]   result   The result from hits
  * @return actual number of iterations
  */
-HIPGRAPH_EXPORT size_t
-    hipgraph_hits_result_get_number_of_iterations(hipgraph_hits_result_t* result);
+HIPGRAPH_EXPORT size_t hipgraph_hits_result_get_number_of_iterations(hipgraph_hits_result_t* result);
 
 /**
  * @ingroup centrality
@@ -601,17 +582,17 @@ HIPGRAPH_EXPORT void hipgraph_hits_result_free(hipgraph_hits_result_t* result);
  *                          be populated if error code is not HIPGRAPH_SUCCESS
  * @return error code
  */
-HIPGRAPH_EXPORT hipgraph_error_code_t
-    hipgraph_hits(const hipgraph_resource_handle_t*               handle,
-                  hipgraph_graph_t*                               graph,
-                  double                                          epsilon,
-                  size_t                                          max_iterations,
-                  const hipgraph_type_erased_device_array_view_t* initial_hubs_guess_vertices,
-                  const hipgraph_type_erased_device_array_view_t* initial_hubs_guess_values,
-                  hipgraph_bool_t                                 normalize,
-                  hipgraph_bool_t                                 do_expensive_check,
-                  hipgraph_hits_result_t**                        result,
-                  hipgraph_error_t**                              error);
+HIPGRAPH_EXPORT hipgraph_error_code_t hipgraph_hits(
+  const hipgraph_resource_handle_t* handle,
+  hipgraph_graph_t* graph,
+  double epsilon,
+  size_t max_iterations,
+  const hipgraph_type_erased_device_array_view_t* initial_hubs_guess_vertices,
+  const hipgraph_type_erased_device_array_view_t* initial_hubs_guess_values,
+  bool normalize,
+  bool do_expensive_check,
+  hipgraph_hits_result_t** result,
+  hipgraph_error_t** error);
 
 #ifdef __cplusplus
 }

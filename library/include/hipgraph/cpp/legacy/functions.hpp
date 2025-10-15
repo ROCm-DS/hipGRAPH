@@ -1,65 +1,48 @@
-#if !defined(HIPGRAPH_HDR___LEGACY_FUNCTIONS_HPP_)
-#define HIPGRAPH_HDR___LEGACY_FUNCTIONS_HPP_ 1
-/*
- * SPDX-FileCopyrightText: Modifications Copyright (C) 2024 Advanced Micro Devices, Inc.
+/* -*- C++ -*-
+ * SPDX-FileCopyrightText: Copyright (C) 2025 Advanced Micro Devices, Inc.
  * SPDX-License-Identifier: MIT
  */
-/*
- * Copyright (C) 2020-2024, NVIDIA CORPORATION.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+#if !defined(_hipgraph__/LEGACY/FUNCTIONS_HPP_)
+#define _hipgraph__/LEGACY/FUNCTIONS_HPP_ 1
 
-#include <utility>
+#include <cugraph/./legacy/functions.hpp>
+#if !defined(HIPGRAPH_BACKEND_DECLARED_)
+#define HIPGRAPH_BACKEND_DECLARED_ "./legacy/functions.hpp"
+namespace hipgraph
+{
+    namespace backend = ::cugraph;
+}
 
+// Legacy and future...
+#if 0
 #if defined(USE_CUDA)
 #include <cugraph/./legacy/functions.hpp>
 #if !defined(HIPGRAPH_BACKEND_DECLARED_)
-#define HIPGRAPH_BACKEND_DECLARED_ "legacy/functions.hpp"
+#define HIPGRAPH_BACKEND_DECLARED_ "./legacy/functions.hpp"
 namespace hipgraph
 {
-    namespace backend = ::cuda;
+    namespace backend = ::cugraph;
 }
 #endif
 #else
-#include <rocgraph/cpp/./legacy/functions.hpp>
+#include <rocgraph/./legacy/functions.hpp>
 #if !defined(HIPGRAPH_BACKEND_DECLARED_)
-#define HIPGRAPH_BACKEND_DECLARED_ "legacy/functions.hpp"
+#define HIPGRAPH_BACKEND_DECLARED_ "./legacy/functions.hpp"
+namespace rocgraph = cugraph; // For now.
 namespace hipgraph
 {
     namespace backend = ::rocgraph;
 }
 #endif
 #endif
-
-#include "graph.hpp"
-
-#include <raft/core/handle.hpp>
-
-#include <rmm/device_buffer.hpp>
-#include <rmm/resource_ref.hpp>
+#endif
 
 namespace hipgraph
 {
-    // Functions
-    template <typename... OrigArgs>
-    constexpr auto coo_to_csr = [](auto&&... args) {
-        return ::hipgraph::backend::coo_to_csr<OrigArgs...>(std::forward<decltype(args)>(args)...);
-    };
-    template <typename... OrigArgs>
-    constexpr auto comms_bcast = [](auto&&... args) {
-        return ::hipgraph::backend::comms_bcast<OrigArgs...>(std::forward<decltype(args)>(args)...);
-    };
-} // namespace hipgraph
+inline namespace compat_v25_02 {
+  using namespace ::hipgraph::backend;
+}
+}
 
-#endif // HIPGRAPH_HDR___LEGACY_FUNCTIONS_HPP_
+#endif // _hipgraph__/LEGACY/FUNCTIONS_HPP_
+

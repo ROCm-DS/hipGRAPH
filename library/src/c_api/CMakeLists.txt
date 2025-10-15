@@ -20,7 +20,8 @@
 
 # hipGRAPH C API source
 if(USE_CUDA)
-    add_subdirectory(nvidia_detail)
+    add_subdirectory(cuda_detail)
 else()
-    add_subdirectory(amd_detail)
+    # TODO: roc-ify the names.
+    add_subdirectory(cuda_detail)
 endif()
