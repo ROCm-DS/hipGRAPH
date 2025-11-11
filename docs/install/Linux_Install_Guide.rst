@@ -15,17 +15,21 @@ following steps.
 Prerequisites
 =============
 
-hipGRAPH requires a ROCm-enabled platform as an implementation backend. This documentation
-assumes that you have a system with a compatible AMD GPU. Patches are welcome.
+hipGRAPH requires a ROCm-enabled platform as an implementation backend. This documentation assumes that
+you have a system with a compatible AMD GPU. hipGRAPH has been tested with the following system requirements:
 
-There currently are no prebuilt packages, and hipGRAPH must be built and installed from source files.
+* OS: Ubuntu 22.04
+* ROCm: 6.4.0
+* GPUs: gfx1100, gfx90a
 
 Building hipGRAPH from source for the ROCm backend
 ==================================================
 
+There currently are no prebuilt packages, and hipGRAPH must be built and installed from source files.
+
 The following compile-time dependencies must be met:
 
-- `AMD ROCm 6.4.0 or later <https://rocm.docs.amd.com/projects/install-on-linux/en/latest/>`_
+- `AMD ROCm 6.4.0 <https://rocm.docs.amd.com/projects/install-on-linux/en/docs-6.4.0/>`_
 - `rocGRAPH <https://github.com/ROCm-DS/rocGRAPH>`_
 - `git <https://git-scm.com/>`_
 - `CMake <https://cmake.org/>`_ 3.5 or later
@@ -138,14 +142,3 @@ Building the Python modules
 
 The Python modules require much more detailed instructions, which are work
 in progress. See ``clients/python``.
-
-Supported Systems
-=================
-
-Currently, hipGRAPH is supported under the following operating systems
-
-- Ubuntu 20.04
-- Ubuntu 22.04
-- RHEL 8
-- RHEL 9
-- SLES 15
