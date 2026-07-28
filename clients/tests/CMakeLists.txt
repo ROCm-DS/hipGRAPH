@@ -57,6 +57,44 @@ if(USE_CUDA)
     target_link_libraries(hipgraph-test PRIVATE ${CUDA_LIBRARIES})
 endif()
 
+if(BUILD_CODE_COVERAGE)
+  add_custom_target(
+    code_cov_tests
+    DEPENDS hipgraph-test
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ./coverage-report
+    COMMAND ${CMAKE_COMMAND} -E make_directory ./coverage-report/profraw
+    COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE="./coverage-report/profraw/hipgraph-coverage_%p.profraw" $<TARGET_FILE:hipgraph-test>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  )
+
+  find_program(
+    LLVM_PROFDATA
+    llvm-profdata
+    REQUIRED
+    HINTS ${ROCM_PATH}/llvm/bin
+    PATHS /opt/rocm/llvm/bin
+  )
+
+  find_program(
+    LLVM_COV
+    llvm-cov
+    REQUIRED
+    HINTS ${ROCM_PATH}/llvm/bin
+    PATHS /opt/rocm/llvm/bin
+  )
+
+  add_custom_target(
+    coverage
+    DEPENDS code_cov_tests
+    COMMAND ${LLVM_PROFDATA} merge -sparse ./coverage-report/profraw/hipgraph-coverage_*.profraw -o ./coverage-report/hipgraph.profdata
+    COMMAND ${LLVM_COV} report -object ./library/src/libhipgraph.so -instr-profile=./coverage-report/hipgraph.profdata
+    COMMAND ${LLVM_COV} show -object ./library/src/libhipgraph.so -instr-profile=./coverage-report/hipgraph.profdata -format=html -output-dir=coverage-report
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  )
+
+endif()
+
+
 set_target_properties(hipgraph-test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging")
 
 rocm_install(TARGETS hipgraph-test COMPONENT tests)
