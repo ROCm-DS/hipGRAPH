@@ -1,6 +1,6 @@
 .. meta::
   :description: hipGRAPH Python API reference library
-  :keywords: hipGRAPH, hipgraph, pylibhipgraph.all_pairs_jaccard_coefficients, ROCm-DS, API, documentation
+  :keywords: hipGRAPH, hipgraph, pylibhipgraph.all_pairs_jaccard_coefficients, AMD Data Science, API, documentation
 
 .. _hipgraph-all_pairs_jaccard:
 

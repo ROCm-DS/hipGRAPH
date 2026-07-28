@@ -1,6 +1,6 @@
 .. meta::
-  :description: ROCm-DS pylibhipgraph API reference library
-  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.analyze_clustering_ratio_cut, rocGRAPH, ROCm-DS, API, documentation
+  :description: AMD Data Science pylibhipgraph API reference library
+  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.analyze_clustering_ratio_cut, rocGRAPH, AMD Data Science, API, documentation
 
 .. _pylibhipgraph-analyze_clustering_ratio_cut:
 
