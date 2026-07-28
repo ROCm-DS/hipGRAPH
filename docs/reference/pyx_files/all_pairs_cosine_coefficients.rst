@@ -1,6 +1,6 @@
 .. meta::
-  :description: ROCm-DS pylibhipgraph API reference library
-  :keywords: hipGRAPH, pylibhipgraph, rocGRAPH, pylibhipgraph.all_pairs_cosine_coefficients, ROCm-DS, API, documentation
+  :description: AMD Data Science pylibhipgraph API reference library
+  :keywords: hipGRAPH, pylibhipgraph, rocGRAPH, pylibhipgraph.all_pairs_cosine_coefficients, AMD Data Science, API, documentation
 
 .. _hipgraph-all_pairs_cosine:
 
