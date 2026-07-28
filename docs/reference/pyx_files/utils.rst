@@ -1,6 +1,6 @@
 .. meta::
-  :description: ROCm-DS pylibhipgraph API reference library
-  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.copy_to_cupy_array, rocGRAPH, ROCm-DS, API, documentation
+  :description: AMD Data Science pylibhipgraph API reference library
+  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.copy_to_cupy_array, rocGRAPH, AMD Data Science, API, documentation
 
 .. _pylibhipgraph-copy_to_cupy_array:
 

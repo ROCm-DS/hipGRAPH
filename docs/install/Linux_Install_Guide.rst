@@ -1,6 +1,6 @@
 .. meta::
   :description: hipGRAPH documentation and API reference library
-  :keywords: Graph, Graph-algorithms, Graph-analysis, Graph-processing, Complex-networks, rocGraph, hipGraph, cuGraph, NetworkX, GPU, RAPIDS, ROCm-DS
+  :keywords: Graph, Graph-algorithms, Graph-analysis, Graph-processing, Complex-networks, rocGraph, hipGraph, cuGraph, NetworkX, GPU, RAPIDS, AMD Data Science
 
 .. _linux-install:
 
@@ -30,7 +30,7 @@ There currently are no prebuilt packages, and hipGRAPH must be built and install
 The following compile-time dependencies must be met:
 
 - `AMD ROCm 6.4.0 <https://rocm.docs.amd.com/projects/install-on-linux/en/docs-6.4.0/>`_
-- `rocGRAPH <https://github.com/ROCm-DS/rocGRAPH>`_
+- `rocGRAPH <https://github.com/AMD-Ecosystem/rocGRAPH>`_
 - `git <https://git-scm.com/>`_
 - `CMake <https://cmake.org/>`_ 3.5 or later
 - `GoogleTest <https://github.com/google/googletest>`_ (optional, for the test suite)
@@ -43,12 +43,12 @@ The following compile-time dependencies must be met:
 Download hipGRAPH
 -----------------
 
-The hipGRAPH source code is available at the `hipGRAPH GitHub page <https://github.com/ROCm-DS/hipGRAPH>`_.
+The hipGRAPH source code is available at the `hipGRAPH GitHub page <https://github.com/AMD-Ecosystem/hipGRAPH>`_.
 Download the source code using the following commands:
 
 .. code:: bash
 
-  $ git clone https://github.com/ROCm-DS/hipGRAPH.git
+  $ git clone https://github.com/AMD Ecosystem/hipGRAPH.git
   $ cd hipGRAPH
 
 Using ``install.sh`` to build and install hipGRAPH
