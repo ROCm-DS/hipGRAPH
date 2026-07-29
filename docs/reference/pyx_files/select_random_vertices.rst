@@ -1,6 +1,6 @@
 .. meta::
-  :description: ROCm-DS pylibhipgraph API reference library
-  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.select_random_vertices, rocGRAPH, ROCm-DS, API, documentation
+  :description: AMD Data Science pylibhipgraph API reference library
+  :keywords: hipGRAPH, pylibhipgraph, pylibhipgraph.select_random_vertices, rocGRAPH, AMD Data Science, API, documentation
 
 .. _pylibhipgraph-select_random_vertices:
 

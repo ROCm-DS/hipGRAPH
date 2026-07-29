@@ -15,7 +15,7 @@ hipGRAPH is a graph marshalling library that acts as a wrapper between your appl
 
 The hipGRAPH library contains a collection of graph algorithms, enabling you to build, analyze, and manipulate complex graphs or networks. hipGRAPH is derived from the cuGraph library that forms part of the NVIDIA RAPIDS open source project. The hipGRAPH library described here should not be confused with `HIP graphs <https://rocm.docs.amd.com/projects/HIP/en/latest/how-to/hip_runtime_api/hipgraph.html>`_ in the HIP runtime API.
 
-The hipGRAPH code is open and hosted at `https://github.com/ROCm-DS/hipGraph <https://github.com/ROCm-DS/hipGraph>`_.
+The hipGRAPH code is open and hosted at `https://github.com/AMD-Ecosystem/hipGraph <https://github.com/AMD-Ecosystem/hipGraph>`_.
 
 The hipGRAPH documentation is structured as follows:
 
@@ -31,6 +31,6 @@ The hipGRAPH documentation is structured as follows:
     * :ref:`C++ API reference <hipgraph-reference>`
     * :ref:`Python API reference <hipgraph-python>`
 
-To contribute to the documentation refer to `Contributing to ROCm-DS  <https://rocm.docs.amd.com/projects/rocm-ds/en/latest/contribute/contributing.html>`_.
+To contribute to the documentation refer to `Contributing to AMD Data Science  <https://rocm.docs.amd.com/projects/rocm-ds/en/latest/contribute/contributing.html>`_.
 
 You can find licensing information on the `Licensing <https://rocm.docs.amd.com/projects/rocm-ds/en/latest/about/license.html>`_ page.
